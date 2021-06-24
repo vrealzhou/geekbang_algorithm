@@ -1,6 +1,9 @@
 package test
 
-import "strings"
+import (
+	"strconv"
+	"strings"
+)
 
 func ParseStringArray(v string) []string {
 	stack := make([]bool, 0)
@@ -36,4 +39,16 @@ func ParseStringArray(v string) []string {
 		}
 	}
 	return result
+}
+
+func MsgAndArgs(i int, oprations, values []string) []interface{} {
+	return []interface{}{"at %d, operation %s, value %s", i, oprations[i], values[i]}
+}
+
+func ExtractIntValue(item string, i int) int {
+	v, err := strconv.Atoi(ParseStringArray(item)[i])
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

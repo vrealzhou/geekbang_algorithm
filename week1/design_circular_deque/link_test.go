@@ -60,44 +60,32 @@ func testSequence(t *testing.T, constructor func(k int) Deque, oprationStr, valu
 		for i, opration := range oprations {
 			switch opration {
 			case `"MyCircularDeque"`:
-				d = constructor(extractIntValue(values[i]))
+				d = constructor(test.ExtractIntValue(values[i], 0))
 			case `"insertFront"`:
-				result := d.InsertFront(extractIntValue(values[i]))
-				assert.Equal(t, strconv.FormatBool(result), expects[i], msgAndArgs(i, oprations, values)...)
+				result := d.InsertFront(test.ExtractIntValue(values[i], 0))
+				assert.Equal(t, strconv.FormatBool(result), expects[i], test.MsgAndArgs(i, oprations, values)...)
 			case `"insertLast"`:
-				result := d.InsertLast(extractIntValue(values[i]))
-				assert.Equal(t, strconv.FormatBool(result), expects[i], msgAndArgs(i, oprations, values)...)
+				result := d.InsertLast(test.ExtractIntValue(values[i], 0))
+				assert.Equal(t, strconv.FormatBool(result), expects[i], test.MsgAndArgs(i, oprations, values)...)
 			case `"deleteFront"`:
 				result := d.DeleteFront()
-				assert.Equal(t, strconv.FormatBool(result), expects[i], msgAndArgs(i, oprations, values)...)
+				assert.Equal(t, strconv.FormatBool(result), expects[i], test.MsgAndArgs(i, oprations, values)...)
 			case `"deleteLast"`:
 				result := d.DeleteLast()
-				assert.Equal(t, strconv.FormatBool(result), expects[i], msgAndArgs(i, oprations, values)...)
+				assert.Equal(t, strconv.FormatBool(result), expects[i], test.MsgAndArgs(i, oprations, values)...)
 			case `"getFront"`:
 				result := d.GetFront()
-				assert.Equal(t, strconv.Itoa(result), expects[i], msgAndArgs(i, oprations, values)...)
+				assert.Equal(t, strconv.Itoa(result), expects[i], test.MsgAndArgs(i, oprations, values)...)
 			case `"getRear"`:
 				result := d.GetRear()
-				assert.Equal(t, strconv.Itoa(result), expects[i], msgAndArgs(i, oprations, values)...)
+				assert.Equal(t, strconv.Itoa(result), expects[i], test.MsgAndArgs(i, oprations, values)...)
 			case `"isEmpty"`:
 				result := d.IsEmpty()
-				assert.Equal(t, strconv.FormatBool(result), expects[i], msgAndArgs(i, oprations, values)...)
+				assert.Equal(t, strconv.FormatBool(result), expects[i], test.MsgAndArgs(i, oprations, values)...)
 			case `"isFull"`:
 				result := d.IsFull()
-				assert.Equal(t, strconv.FormatBool(result), expects[i], msgAndArgs(i, oprations, values)...)
+				assert.Equal(t, strconv.FormatBool(result), expects[i], test.MsgAndArgs(i, oprations, values)...)
 			}
 		}
 	})
-}
-
-func msgAndArgs(i int, oprations, values []string) []interface{} {
-	return []interface{}{"at %d, operation %s, value %s", i, oprations[i], values[i]}
-}
-
-func extractIntValue(item string) int {
-	v, err := strconv.Atoi(test.ParseStringArray(item)[0])
-	if err != nil {
-		panic(err)
-	}
-	return v
 }

@@ -11,20 +11,27 @@
 package subset
 
 func subsets(nums []int) [][]int {
-	result := make([][]int, 0)
-	for i := 0; i < len(nums); i++ {
-		result = append(result, inner(nums[i], nums[i+1:])...)
+	f := &finder{
+		result: make([][]int, 0),
 	}
-	return append([][]int{{}}, result...)
+	f.findSubsets(nums, make([]int, 0), 0)
+	return f.result
 }
 
-func inner(head int, tail []int) [][]int {
-	result := [][]int{{head}}
-	for i := 0; i < len(tail); i++ {
-		rest := inner(tail[i], tail[i+1:])
-		for j := 0; j < len(rest); j++ {
-			result = append(result, append([]int{head}, rest[j]...))
-		}
+type finder struct {
+	result [][]int
+}
+
+func (f *finder) findSubsets(nums, set []int, index int) {
+	if index == len(nums) {
+		s := make([]int, len(set))
+		copy(s, set)
+		f.result = append(f.result, s)
+		return
 	}
-	return result
+	// not add
+	f.findSubsets(nums, set, index+1)
+	// add
+	set = append(set, nums[index])
+	f.findSubsets(nums, set, index+1)
 }

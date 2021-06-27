@@ -52,3 +52,47 @@ func ExtractIntValue(item string, i int) int {
 	}
 	return v
 }
+
+func ParseIntArray(v string) []int {
+	stack := make([]bool, 0)
+	result := make([]int, 0)
+	buf := strings.Builder{}
+	for _, c := range v {
+		switch c {
+		case '[':
+			stack = append(stack, true)
+			if len(stack) > 1 {
+				buf.WriteRune(c)
+			}
+		case ']':
+			if len(stack) > 1 {
+				buf.WriteRune(c)
+			} else {
+				if buf.Len() > 0 {
+					result = append(result, forceParseInt(buf.String()))
+				}
+			}
+			stack = stack[:len(stack)-1]
+		case ',':
+			if len(stack) > 1 {
+				buf.WriteRune(c)
+			} else {
+				if buf.Len() > 0 {
+					result = append(result, forceParseInt(buf.String()))
+				}
+				buf = strings.Builder{}
+			}
+		default:
+			buf.WriteRune(c)
+		}
+	}
+	return result
+}
+
+func forceParseInt(s string) int {
+	intVal, err := strconv.Atoi(s)
+	if err != nil {
+		panic(err)
+	}
+	return intVal
+}

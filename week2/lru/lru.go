@@ -49,7 +49,6 @@ func (this *LRUCache) Get(key int) int {
 	}
 	this.remove(n)
 	this.putToHead(n)
-	fmt.Printf("get %d:\n%s\n", key, this.String())
 	return n.Val
 }
 
@@ -63,14 +62,12 @@ func (this *LRUCache) Put(key int, value int) {
 	}
 	this.putToHead(n)
 	this.m[key] = n
-	fmt.Printf("put %d m %v:\n%s\n", key, this.m, this.String())
 	if len(this.m) > this.capacity {
 		last := this.tail.Prev
 		delete(this.m, last.Key)
 		last.Prev.Next = this.tail
 		this.tail.Prev = last.Prev
 	}
-	fmt.Printf("put delete %d m %v:\n%s\n", key, this.m, this.String())
 }
 
 func (this *LRUCache) remove(n *node) {

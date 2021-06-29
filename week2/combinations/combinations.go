@@ -4,20 +4,30 @@
 package combinations
 
 func combine(n int, k int) [][]int {
-	return sub(1, n, k)
+	f := &finder{
+		result: make([][]int, 0),
+	}
+	f.findSubsets(make([]int, 0), 1, n, k)
+	return f.result
 }
 
-func sub(start, end, k int) [][]int {
-	result := make([][]int, 0)
-	for i := start; i <= end; i++ {
-		if k > 1 {
-			rest := sub(i+1, end, k-1)
-			for j := 0; j < len(rest); j++ {
-				result = append(result, append([]int{i}, rest[j]...))
-			}
-		} else {
-			result = append(result, append([]int{i}))
-		}
+type finder struct {
+	result [][]int
+}
+
+func (f *finder) findSubsets(set []int, index, n, k int) {
+	if len(set) > k || len(set)+n-index+1 < k {
+		return
 	}
-	return result
+	if index == n+1 {
+		s := make([]int, len(set))
+		copy(s, set)
+		f.result = append(f.result, s)
+		return
+	}
+	// not add
+	f.findSubsets(set, index+1, n, k)
+	// add
+	set = append(set, index)
+	f.findSubsets(set, index+1, n, k)
 }

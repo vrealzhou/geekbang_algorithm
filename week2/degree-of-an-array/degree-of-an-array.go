@@ -22,7 +22,6 @@ func findShortestSubArray(nums []int) int {
 		item, ok := metas[nums[i]]
 		if !ok {
 			item = &meta{
-				val:      nums[i],
 				start:    i,
 				count:    0,
 				distance: 0,
@@ -40,7 +39,6 @@ func findShortestSubArray(nums []int) int {
 }
 
 type meta struct {
-	val      int
 	start    int
 	count    int
 	distance int

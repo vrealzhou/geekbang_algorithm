@@ -1,36 +1,47 @@
 /*
- * @lc app=leetcode id=697 lang=golang
- *
- * [697] Degree of an Array
- */
+给定一个非空且只包含非负数的整数数组 nums，数组的度的定义是指数组里任一元素出现频数的最大值。
 
-package leetcode
+你的任务是在 nums 中找到与 nums 拥有相同大小的度的最短连续子数组，返回其长度。
 
-import "math"
 
-// @lc code=start
+
+
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/degree-of-an-array
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+*/
+
+package main
+
 func findShortestSubArray(nums []int) int {
 	// count nums and store nums locaion
-	locations := make(map[int][]int)
+	metas := make(map[int]*meta)
+	var degree *meta
 	for i := 0; i < len(nums); i++ { // O(n)
-		locations[nums[i]] = append(locations[nums[i]], i)
-	}
-	// get degree
-	degree := 0
-	length := int(math.MaxInt32)
-	for _, location := range locations { // O(n)
-		count := len(location)
-		if count < degree {
-			continue
+		item, ok := metas[nums[i]]
+		if !ok {
+			item = &meta{
+				val:      nums[i],
+				start:    i,
+				count:    0,
+				distance: 0,
+			}
+			metas[nums[i]] = item
 		}
-		l := location[len(location)-1] - location[0] + 1
-		if count > degree {
-			degree = count
-			length = l
-		} else if l < length {
-			length = l
+		item.count++
+		item.distance = i - item.start + 1
+		if degree == nil || degree.count < item.count ||
+			(degree.count == item.count && degree.distance > item.distance) {
+			degree = item
 		}
 	}
+	return degree.distance
+}
 
-	return length
-} // @lc code=end
+type meta struct {
+	val      int
+	start    int
+	count    int
+	distance int
+}

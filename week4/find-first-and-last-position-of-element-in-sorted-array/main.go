@@ -40,18 +40,15 @@ func lowerBound(nums []int, target int) int {
 }
 
 func upperBound(nums []int, target int) int {
-	left := 0
-	right := len(nums)
+	left := -1
+	right := len(nums) - 1
 	for left < right {
-		mid := (left + right) / 2
-		if nums[mid] > target {
-			right = mid
+		mid := (left + right + 1) / 2
+		if nums[mid] <= target {
+			left = mid
 		} else {
-			left = mid + 1
+			right = mid - 1
 		}
 	}
-	if right == 0 || right > len(nums) {
-		return -1
-	}
-	return right - 1
+	return right
 }

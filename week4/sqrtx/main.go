@@ -25,18 +25,15 @@
 package main
 
 func mySqrt(x int) int {
-	left := 0
-	right := x
+	var left int64 = 0
+	var right int64 = int64(x)
 	for left < right {
-		mid := (left + right) / 2
-		if mid*mid >= x {
-			right = mid
+		mid := (left + right + 1) / 2
+		if mid*mid <= int64(x) {
+			left = mid
 		} else {
-			left = mid + 1
+			right = mid - 1
 		}
 	}
-	if right*right > x {
-		return right - 1
-	}
-	return right
+	return int(right)
 }

@@ -14,15 +14,15 @@
 package main
 
 func searchRange(nums []int, target int) []int {
-	left := low_bound(nums, target)
+	left := lowerBound(nums, target)
 	if left == -1 {
 		return []int{-1, -1}
 	}
-	right := high_bound(nums, target)
+	right := upperBound(nums, target)
 	return []int{left, right}
 }
 
-func low_bound(nums []int, target int) int {
+func lowerBound(nums []int, target int) int {
 	left := 0
 	right := len(nums)
 	for left < right {
@@ -39,7 +39,7 @@ func low_bound(nums []int, target int) int {
 	return right
 }
 
-func high_bound(nums []int, target int) int {
+func upperBound(nums []int, target int) int {
 	left := 0
 	right := len(nums)
 	for left < right {
@@ -50,7 +50,7 @@ func high_bound(nums []int, target int) int {
 			left = mid + 1
 		}
 	}
-	if right > len(nums) || right == 0 {
+	if right == 0 || right > len(nums) {
 		return -1
 	}
 	return right - 1

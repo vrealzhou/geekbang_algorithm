@@ -51,7 +51,8 @@ func mergeInterval(interval1, interval2 []int) ([]int, []int) {
 	if interval1[1] > interval2[1] {
 		return interval1, nil
 	}
-	return []int{interval1[0], interval2[1]}, nil
+	interval1[1] = interval2[1]
+	return interval1, nil
 }
 
 func qs(intervals [][]int, l, r int) {

@@ -30,11 +30,13 @@ func qs(nums []int, l, r, k int) {
 	}
 	pivot := partition(nums, l, r)
 	k1, k2 := splitK(pivot, k)
-	qs(nums, l, pivot, k1)
+
 	// 如果中值左侧超出k个则不需要对右侧排序了。如果需要对右侧排序则只需要对最大的k2个进行排序。
 	// PS：leetcode提交的话总是在第30个用例失败，但是直接运行第30个用例是成功的。
 	if k2 > 0 {
 		qs(nums, pivot+1, r, k2)
+	} else {
+		qs(nums, l, pivot, k1)
 	}
 }
 

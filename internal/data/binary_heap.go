@@ -71,7 +71,5 @@ func (h *Heap) Pop() interface{} {
 }
 
 func (h *Heap) swap(a, b int) {
-	v := h.data[a]
-	h.data[a] = h.data[b]
-	h.data[b] = v
+	h.data[a], h.data[b] = h.data[b], h.data[a]
 }

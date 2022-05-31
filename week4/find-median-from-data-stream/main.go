@@ -23,20 +23,20 @@ import (
 )
 
 type MedianFinder struct {
-	firstHalf *data.Heap
-	endHalf   *data.Heap
+	firstHalf *data.MaxHeap[int]
+	endHalf   *data.MaxHeap[int]
 	count     int
 }
 
 /** initialize your data structure here. */
 func Constructor() MedianFinder {
 	return MedianFinder{
-		firstHalf: data.NewHeap(0, func(source, target interface{}) int {
-			return source.(int) - target.(int)
-		}),
-		endHalf: data.NewHeap(0, func(source, target interface{}) int {
-			return target.(int) - source.(int)
-		}),
+		firstHalf: data.NewMaxHeap(0, func(source, target int) int {
+			return source - target
+		}, 0),
+		endHalf: data.NewMaxHeap(0, func(source, target int) int {
+			return target - source
+		}, 0),
 		count: 0,
 	}
 }
@@ -45,24 +45,29 @@ func (f *MedianFinder) AddNum(num int) {
 	f.count++
 	f.endHalf.Add(num)
 	if f.count%2 != 0 {
-		f.firstHalf.Add(f.endHalf.Pop())
-	} else if f.endHalf.Top().(int) < f.firstHalf.Top().(int) {
-		f.firstHalf.Add(f.endHalf.Pop())
-		f.endHalf.Add(f.firstHalf.Pop())
+		r, _ := f.endHalf.Pop()
+		f.firstHalf.Add(r)
+	} else {
+		t1, _ := f.endHalf.Top()
+		t2, _ := f.firstHalf.Top()
+		if t1 < t2 {
+			f.endHalf.Pop()
+			f.firstHalf.Pop()
+			f.firstHalf.Add(t1)
+			f.endHalf.Add(t2)
+		}
 	}
 	// fmt.Printf("count %d, first %v, second %v\n", f.count, f.firstHalf.Top(), f.endHalf.Top())
 }
 
 func (f *MedianFinder) FindMedian() float64 {
-	tmp := f.firstHalf.Top()
-	if tmp == nil {
+	first, more := f.firstHalf.Top()
+	if !more {
 		return 0
 	}
-	first := tmp.(int)
 	if f.count%2 != 0 {
 		return float64(first)
 	}
-	tmp = f.endHalf.Top()
-	second := tmp.(int)
+	second, _ := f.endHalf.Top()
 	return float64(first+second) / 2
 }

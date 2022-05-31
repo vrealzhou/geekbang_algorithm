@@ -12,9 +12,9 @@ package main
 import "github.com/vrealzhou/geekbang_algorithm/internal/data"
 
 func maxSlidingWindow(nums []int, k int) []int {
-	h := data.NewHeap(0, func(source, target interface{}) int {
-		return source.(*Item).Val - target.(*Item).Val
-	})
+	h := data.NewMaxHeap(0, func(source, target *Item) int {
+		return source.Val - target.Val
+	}, nil)
 	result := make([]int, 0)
 	for i, v := range nums {
 		h.Add(&Item{v, i})
@@ -22,12 +22,12 @@ func maxSlidingWindow(nums []int, k int) []int {
 			continue
 		}
 		for {
-			max := h.Pop()
-			if max == nil {
+			max, more := h.Pop()
+			if !more {
 				break
 			}
-			if max.(*Item).Index+k >= i {
-				result = append(result, max.(*Item).Val)
+			if max.Index+k >= i {
+				result = append(result, max.Val)
 				break
 			}
 		}

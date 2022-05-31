@@ -29,17 +29,17 @@ type ListNode struct {
  * 二叉堆做法
  */
 func mergeKListsInDivide(lists []*ListNode) *ListNode {
-	tops := data.NewHeap(len(lists), func(source, target interface{}) int {
-		return target.(*ListNode).Val - source.(*ListNode).Val
-	})
+	tops := data.NewMaxHeap(len(lists), func(source, target *ListNode) int {
+		return target.Val - source.Val
+	}, nil)
 	var head *ListNode
 	var node *ListNode
 	for _, top := range lists { // init head
 		tops.Add(top)
 	}
 	for {
-		top := tops.Pop().(*ListNode)
-		if top == nil {
+		top, more := tops.Pop()
+		if !more {
 			break
 		}
 		if head == nil {

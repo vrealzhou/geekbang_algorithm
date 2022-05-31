@@ -47,9 +47,9 @@ func (t *Twitter) GetNewsFeed(userId int) []int {
 	result := make([]int, 10)
 	userCount := len(t.follows[userId]) + 1
 	// init binary heap
-	h := data.NewHeap(userCount, func(source, target interface{}) int {
-		return source.(*tweet).ts - target.(*tweet).ts
-	})
+	h := data.NewMaxHeap(userCount, func(source, target *tweet) int {
+		return source.ts - target.ts
+	}, nil)
 	if t.tweets[userId].Next != nil {
 		h.Add(t.tweets[userId])
 	}
@@ -61,11 +61,11 @@ func (t *Twitter) GetNewsFeed(userId int) []int {
 	}
 	i := 0
 	for ; i < 10; i++ {
-		top := h.Pop()
-		if top == nil {
+		top, more := h.Pop()
+		if !more {
 			break
 		}
-		item := top.(*tweet)
+		item := top
 		result[i] = item.id
 		if item.Next != nil && item.Next.Next != nil {
 			h.Add(item.Next)

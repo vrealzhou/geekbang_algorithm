@@ -1,43 +1,34 @@
 package data
 
-type Heap struct {
-	tail    int
+type MaxHeap[T any] struct {
 	size    int
-	index   int
-	data    []item
-	compare func(t, o interface{}) int
+	data    []maxHeapItem[T]
+	compare func(t, o T) int
+	zero    T
 }
 
-type item struct {
-	value interface{}
+type maxHeapItem[T any] struct {
+	value T
 	index int
 }
 
 // Variable size heap if size is 0
-func NewHeap(size int, compare func(t, o interface{}) int) *Heap {
-	return &Heap{
-		tail:    -1,
+func NewMaxHeap[T any](size int, compare func(t, o T) int, zero T) *MaxHeap[T] {
+	return &MaxHeap[T]{
 		size:    size,
-		data:    make([]item, size),
+		data:    make([]maxHeapItem[T], 0, size),
 		compare: compare,
+		zero:    zero,
 	}
 }
 
-func (h *Heap) Add(v interface{}) {
-	h.tail++
-	index := h.tail
-	if len(h.data) == index {
-		h.data = append(h.data, item{
-			value: v,
-			index: h.index,
-		})
-	} else {
-		h.data[index] = item{
-			value: v,
-			index: h.index,
-		}
-	}
-	h.index++
+func (h *MaxHeap[T]) Add(v T) {
+	index := len(h.data)
+	h.data = append(h.data, maxHeapItem[T]{
+		value: v,
+		index: index,
+	})
+	// Heapify up
 	for index > 0 && h.compare(h.data[(index-1)/2].value, v) < 0 {
 		newIndex := (index - 1) / 2
 		h.swap(index, newIndex)
@@ -45,58 +36,50 @@ func (h *Heap) Add(v interface{}) {
 	}
 }
 
-func (h *Heap) Top() interface{} {
-	if h.tail == -1 {
-		return nil
+func (h *MaxHeap[T]) Top() (T, bool) {
+	if len(h.data) == 0 {
+		return h.zero, false
 	}
 	h.removeOutdated()
-	return h.data[0].value
+	return h.data[0].value, true
 }
 
-func (h *Heap) removeOutdated() {
-	for h.data[0].index < h.index-h.size {
+func (h *MaxHeap[T]) removeOutdated() {
+	for h.data[0].index < len(h.data)-h.size {
 		h.pop()
 	}
 }
 
-func (h *Heap) pop() interface{} {
-	if h.tail == -1 {
-		return nil
+func (h *MaxHeap[T]) pop() (T, bool) {
+	if len(h.data) == 0 {
+		return h.zero, false
 	}
 	result := h.data[0].value
-	h.data[0] = h.data[h.tail]
-	h.tail--
+	tail := len(h.data) - 1
+	h.data[0] = h.data[tail]
+	h.data = h.data[:tail]
+	// Heapify down
 	index := 0
-	left := index*2 + 1
-	right := index*2 + 2
-	for left <= h.tail {
-		compareLeft := h.compare(h.data[index].value, h.data[left].value)
-		if right > h.tail && compareLeft < 0 {
-			h.swap(index, left)
-			index = left
+	child := index*2 + 1 // left child
+	for child < tail {   // compare and swap with max child to make sure parent larger than all children
+		if child+1 < tail && h.compare(h.data[child].value, h.data[child+1].value) < 0 { // choose right if it has a bigger right child
+			child++
+		}
+		if h.compare(h.data[index].value, h.data[child].value) >= 0 { // already match condition
 			break
 		}
-		if compareLeft > 0 && h.compare(h.data[index].value, h.data[right].value) > 0 {
-			break
-		}
-		if h.compare(h.data[left].value, h.data[right].value) > 0 {
-			h.swap(index, left)
-			index = left
-		} else {
-			h.swap(index, right)
-			index = right
-		}
-		left = index*2 + 1
-		right = index*2 + 2
+		h.swap(index, child)
+		index = child
+		child = index*2 + 1 // left child
 	}
-	return result
+	return result, tail > 0
 }
 
-func (h *Heap) Pop() interface{} {
+func (h *MaxHeap[T]) Pop() (T, bool) {
 	h.removeOutdated()
 	return h.pop()
 }
 
-func (h *Heap) swap(a, b int) {
+func (h *MaxHeap[T]) swap(a, b int) {
 	h.data[a], h.data[b] = h.data[b], h.data[a]
 }
